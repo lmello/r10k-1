@@ -1,6 +1,16 @@
 module MCollective
   module Agent
     class R10k<RPC::Agent
+       activate_when do
+         #This helper only activate this agent for discovery and execution
+         #If the r10k symlink is found on /usr/local/bin.
+         #this is the default path where the puppet-r10k module install it.
+         #It also supports configuration on server.cfg
+         #plugin.r10k.binary = '/path/to/r10k'
+         # http://docs.puppetlabs.com/mcollective/simplerpc/agents.html#agent-activation
+         r10k_binary = Config.instance.pluginconf.fetch("r10k.binary", "/usr/local/bin/r10k")
+         File.exist?(r10k_binary)
+       end
        ['push',
         'pull',
         'status'].each do |act|
